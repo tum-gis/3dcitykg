@@ -1,6 +1,8 @@
 # 3dcitykg
-3DCityKG: Knowledge Graphs for 3D City Models
+3DCityKG: Knowledge Graph representation for Semantic 3D City Models
 
-This repository is a part of the project [citymodel-compare](https://github.com/tum-gis/citymodel-compare), which already contains the full implementation of this repository (and more). 
+This repository provides a fully working implementation of the mapping of semantic 3D city models that are compliant to the [CityGML 1.0/2.0/3.0 standard](https://www.ogc.org/de/publications/standard/citygml/) onto rich graph representations in the [graph database system Neo4j](https://neo4j.com). It has been used already in different projects like change detection and interpretation between two versions of the same city model (project [citymodel-compare](https://github.com/tum-gis/citymodel-compare)) as well as in multi-modal route planning using CityGML 3.0 (navigating from a specific room inside one building to a specific room in another building and traveling by car in-between including finding a parking space and the pedestrian route planning from the parking space to the target room in the destination building).
 
-This repository is being cloned from [citymodel-compare](https://github.com/tum-gis/citymodel-compare). Please check back later for more information.
+The CityGML import/export function of 3DCityKG supports reading and writing CityGML-compliant datasets given in the XML-based CityGML encodings of CityGML version 1.0, 2.0, and 3.0 as well as the CityJSON encoding. Imported data can be analysed, modified, and enriched using Neo4j's Cypher query language. The mapped 3D city models can interactively be explored using the Neo4j Browser, which is part of the Neo4j software ecosystem. 3DCityKG is also supplied as a Docker container for quick and easy installation. 
+
+Note that this repository is currently being constructed and does not contain the code yet. However, the code is already available and fully working as an integral part of the [github repository of the project citymodel-compare](https://github.com/tum-gis/citymodel-compare). Also a working Docker container can be found there. We are currently separating the code of the latter project into two parts, namely 1) mapping of CityGML onto Neo4j (3DCityKG) and 2) change detection and interpretation.
