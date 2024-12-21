@@ -165,6 +165,8 @@ public class ClazzUtils {
 
     public static Object castPrintableObject(Class<?> targetType, String value) {
         if (targetType == null || value == null) return null;
+        if (targetType.equals(boolean.class) || targetType.equals(Boolean.class))
+            return Boolean.valueOf(value);
         if (targetType.equals(byte.class) || targetType.equals(Byte.class))
             return Byte.valueOf(value);
         if (targetType.equals(short.class) || targetType.equals(Short.class))

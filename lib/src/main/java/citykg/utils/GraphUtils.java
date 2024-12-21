@@ -18,8 +18,11 @@ import java.util.stream.StreamSupport;
 public class GraphUtils {
     private final static Logger logger = LoggerFactory.getLogger(GraphUtils.class);
 
-    public static double[] getBoundingBox(Node abstractCityObjectNode) { // TODO This is momentarily only in CityGML v2
+    public static double[] getBoundingBox(Node abstractCityObjectNode) { // For both CityGML v2 and v3
         try {
+            if (!abstractCityObjectNode.hasRelationship(Direction.OUTGOING, EdgeTypes.boundedBy)) {
+                return null;
+            }
             Node envelope = abstractCityObjectNode
                     .getSingleRelationship(EdgeTypes.boundedBy, Direction.OUTGOING).getEndNode()
                     .getSingleRelationship(EdgeTypes.envelope, Direction.OUTGOING).getEndNode();

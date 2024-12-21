@@ -2,20 +2,13 @@ package citykg.core.db;
 
 
 import citykg.core.factory.*;
-import citykg.core.ref.GraphRef;
 import citykg.core.ref.Neo4jRef;
 import citykg.core.config.CityKGDBConfig;
 import citykg.utils.ClazzUtils;
 import citykg.utils.GraphUtils;
-import citykg.utils.MetricBoundarySurfaceProperty;
 import com.github.davidmoten.rtree.RTree;
-import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Geometry;
-import com.github.davidmoten.rtree.geometry.Rectangle;
-import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
-import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.lang3.function.TriConsumer;
-import org.apache.commons.numbers.core.Precision;
 import org.citygml4j.CityGMLContext;
 import org.citygml4j.builder.jaxb.CityGMLBuilder;
 import org.citygml4j.builder.jaxb.CityGMLBuilderException;
@@ -60,6 +53,38 @@ public abstract class CityKGDB extends Neo4jDB {
         rtrees = new RTree[config.MAPPER_DATASET_PATHS.size()];
     }
 
+    public void go() {
+        int useCase = config.USE_CASE;
+        switch (useCase) {
+            case 0 -> {
+                // Map only
+                openEmpty();
+                mapFromConfig();
+                summarize();
+            }
+            case 1 -> {
+                // Export only
+                openExisting();
+                exportCityGML();
+            }
+            case 2 -> {
+                // Map and export
+                openEmpty();
+                mapFromConfig();
+                summarize();
+                exportCityGML();
+            }
+            default -> throw new RuntimeException("Invalid use case");
+        }
+
+        // Kepp database online or close it
+        if (config.DB_ONLINE) {
+            remainOpen();
+        } else {
+            close();
+        }
+    }
+
     protected abstract Neo4jRef mapFileCityGML(String filePath, int partitionIndex, boolean connectToRoot);
 
     protected abstract Class<?> getCityModelClass();
@@ -70,9 +95,9 @@ public abstract class CityKGDB extends Neo4jDB {
 
     protected abstract void calcTLBbox(List<Neo4jRef> topLevelNoBbox, int partitionIndex);
 
-    public abstract void exportCityGML(int partitionIndex, String exportFilePath);
+    public abstract void exportCityGML();
 
-    public abstract void testImportAndExport(String importFilePath, String exportFilePath);
+    protected abstract void exportCityGML(int partitionIndex, double[] topLevelBbox);
 
     protected void setIndexesIfNew() {
         logger.info("|--> Updating indexes");
@@ -364,7 +389,7 @@ public abstract class CityKGDB extends Neo4jDB {
 
     protected abstract Node getTopLevelListNode(Node cityModelNode);
 
-    protected abstract boolean isCOMTopLevel(Node cityObjectMemberNode);
+    protected abstract boolean isParentOfTopLevel(Node parentTopLevelNode);
 
     protected abstract boolean isTopLevel(Node node);
 
@@ -398,24 +423,6 @@ public abstract class CityKGDB extends Neo4jDB {
     protected abstract boolean preProcessMapping(Object chunk);
 
     protected abstract void postProcessMapping(boolean toUpdateBboxTL, Object chunk, Neo4jRef graphRef, int partitionIndex, List<Neo4jRef> topLevelNoBbox);
-
-    protected abstract String getCOMElementId(Transaction tx, Neo4jRef topLevelRef); // COM = CityObjectMember
-
-    protected abstract List<Label> skipLabelsForTopLevel();
-
-    protected abstract boolean isPartProperty(Node node);
-
-    protected abstract boolean isBoundarySurfaceProperty(Node node);
-
-    protected abstract ConvexPolygon3D toConvexPolygon3D(Object polygon, Precision.DoubleEquivalence precision);
-
-    protected abstract double[] multiCurveBBox(Object multiCurve);
-
-    protected abstract List<Line3D> multiCurveToLines3D(Object multiCurve, Precision.DoubleEquivalence precision);
-
-    protected abstract boolean isMultiCurveContainedInLines3D(Object multiCurve, List<Line3D> lines, Precision.DoubleEquivalence precision);
-
-    protected abstract MetricBoundarySurfaceProperty metricFromBoundarySurfaceProperty(Node node, Precision.DoubleEquivalence lengthPrecision, Precision.DoubleEquivalence anglePrecision);
 
     public abstract BiConsumer<Node, Object> handleOriginXLink();
 

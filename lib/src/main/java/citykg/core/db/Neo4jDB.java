@@ -29,7 +29,6 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
-import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public abstract class Neo4jDB implements GraphDB {
     protected Neo4jDBConfig config;
@@ -59,8 +59,10 @@ public abstract class Neo4jDB implements GraphDB {
         dbStats = new DBStats();
     }
 
+    public abstract void go();
+
     @Override
-    public void open() {
+    public void openEmpty() {
         // Clean previous database
         Path db = Path.of(config.DB_PATH);
         try {
@@ -231,10 +233,11 @@ public abstract class Neo4jDB implements GraphDB {
         return node;
     }
 
-    public Object toObject(Node node, BiConsumer<Node, Object> handleOriginXLink) {
+    public Object toObject(Node node,
+                           BiConsumer<Node, Object> handleOriginXLink) {
         Object object = null;
         try {
-            object = toObject(node, new HashMap<>(), handleOriginXLink);
+            object = toObject(node, new HashMap<>(), handleOriginXLink, null, null);
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
@@ -243,7 +246,26 @@ public abstract class Neo4jDB implements GraphDB {
         return object;
     }
 
-    private Object toObject(Node graphNode, HashMap<String, Object> reverseMapped, BiConsumer<Node, Object> handleOriginXLink)
+    public Object toObject(Node node,
+                           BiConsumer<Node, Object> handleOriginXLink,
+                           double[] topLevelBbox,
+                           Function<Node, Boolean> isParentOfTopLevel) {
+        Object object = null;
+        try {
+            object = toObject(node, new HashMap<>(), handleOriginXLink, topLevelBbox, isParentOfTopLevel);
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+        // logger.info("Reverse-mapped {}", object.getClass().getName());
+        return object;
+    }
+
+    private Object toObject(Node graphNode,
+                            HashMap<String, Object> reverseMapped,
+                            BiConsumer<Node, Object> handleOriginXLink,
+                            double[] topLevelBbox,
+                            Function<Node, Boolean> isParentOfTopLevel)
             throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         if (graphNode == null) return null;
 
@@ -323,12 +345,27 @@ public abstract class Neo4jDB implements GraphDB {
                     while (it.hasNext()) {
                         Relationship rel = it.next();
                         if (rel.getType().name().equals(AuxPropNames.ARRAY_MEMBER.toString())) {
-                            Object vNode = toObject(rel.getEndNode(), reverseMapped, handleOriginXLink);
+                            Node endNode = rel.getEndNode();
+                            // Check if this is a top-level node within a given bbox
+                            if (topLevelBbox != null && isParentOfTopLevel.apply(endNode)) {
+                                double[] bbox = GraphUtils.getBoundingBox(endNode.getSingleRelationship(EdgeTypes.object, Direction.OUTGOING).getEndNode());
+                                if (bbox == null) {
+                                    logger.warn("No bounding box found for {}", ClazzUtils.getSimpleClassName(endNode));
+                                } else {
+                                    if (bbox[0] > topLevelBbox[3] || bbox[3] < topLevelBbox[0]
+                                            || bbox[1] > topLevelBbox[4] || bbox[4] < topLevelBbox[1]
+                                            || bbox[2] > topLevelBbox[5] || bbox[5] < topLevelBbox[2]) {
+                                        // Outside the bbox
+                                        continue;
+                                    }
+                                }
+                            }
+                            Object vNode = toObject(endNode, reverseMapped, handleOriginXLink, topLevelBbox, isParentOfTopLevel);
                             if (vNode == null) continue;
-                            if (rel.getEndNode().hasProperty(PropNames.href.toString() + AuxPropNames.__TYPE__)) {
+                            if (endNode.hasProperty(PropNames.href.toString() + AuxPropNames.__TYPE__)) {
                                 // Was originally an XLink
                                 if (handleOriginXLink != null) {
-                                    handleOriginXLink.accept(rel.getEndNode(), vNode);
+                                    handleOriginXLink.accept(endNode, vNode);
                                 }
                             }
                             int index = Integer.parseInt(rel.getProperty(AuxPropNames.ARRAY_INDEX.toString()).toString());
@@ -386,7 +423,7 @@ public abstract class Neo4jDB implements GraphDB {
                         // Complex values stored using edges // TODO Multiple edges of same name?
                         Relationship rel = graphNode.getSingleRelationship(
                                 RelationshipType.withName(fieldName), Direction.OUTGOING);
-                        fieldValue = toObject(rel.getEndNode(), reverseMapped, handleOriginXLink);
+                        fieldValue = toObject(rel.getEndNode(), reverseMapped, handleOriginXLink, topLevelBbox, isParentOfTopLevel);
                         if (fieldValue == null) continue;
                         if (rel.getEndNode().hasProperty(PropNames.href.toString() + AuxPropNames.__TYPE__)) {
                             // Was originally an XLink

@@ -1,7 +1,7 @@
 package citykg.core.db;
 
 public interface GraphDB {
-    void open();
+    void openEmpty();
 
     void openExisting();
 

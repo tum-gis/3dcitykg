@@ -10,9 +10,11 @@ import java.util.Set;
 
 public abstract class BaseDBConfig {
     protected Config config;
+    public final int USE_CASE;
     public final String DB_PATH;
     public final String DB_NAME;
     public final int DB_BATCH_SIZE;
+    public final boolean DB_ONLINE;
     public final List<String> MAPPER_DATASET_PATHS;
     public final Set<Class<?>> MAPPER_EXCLUDE_VERTEX_CLASSES;
     public final Set<String> MAPPER_EXCLUDE_EDGE_TYPES;
@@ -22,9 +24,11 @@ public abstract class BaseDBConfig {
     public BaseDBConfig(String configPath) {
         Config parsedConfig = ConfigFactory.parseFile(new File(configPath));
         config = ConfigFactory.load(parsedConfig);
+        USE_CASE = config.getInt("case");
         DB_PATH = config.getString("db.path");
         DB_NAME = config.getString("db.name");
         DB_BATCH_SIZE = config.getInt("db.batch.size");
+        DB_ONLINE = config.getBoolean("db.online");
         MAPPER_DATASET_PATHS = config.getStringList("mapper.dataset.paths");
         MAPPER_EXCLUDE_VERTEX_CLASSES = new HashSet<>();
         config.getStringList("mapper.exclude.vertex.classes").forEach(label -> {
