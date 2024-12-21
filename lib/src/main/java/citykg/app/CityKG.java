@@ -1,26 +1,23 @@
 package citykg.app;
 
 import citykg.core.config.CityKGDBConfig;
+import citykg.core.db.CityKGDB;
 import citykg.core.db.citygml.CityV2;
 import citykg.core.db.citygml.CityV3;
+import org.citygml4j.core.model.CityGMLVersion;
 
 public class CityKG {
-    private static void testCityGMLV2() throws InterruptedException {
-        CityV2 cityV2 = new CityV2("config/citygmlv2.conf");
-        cityV2.go();
-    }
-
-    private static void testCityGMLV3() throws InterruptedException {
-        CityV3 cityV3 = new CityV3("config/citygmlv3.conf");
-        cityV3.go();
-    }
-
     public static void main(String[] args) {
-        try {
-            testCityGMLV2();
-            // testCityGMLV3();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        CityKGDBConfig config = new CityKGDBConfig("config/run.conf");
+        CityKGDB cityKGDB;
+        if (config.CITYGML_VERSION == CityGMLVersion.v2_0) {
+            cityKGDB = new CityV2("config/run.conf");
+        } else if (config.CITYGML_VERSION == CityGMLVersion.v3_0) {
+            cityKGDB = new CityV3("config/run.conf");
+        } else {
+            throw new RuntimeException("CityGML version given " + config.CITYGML_VERSION
+                    + ", expected " + CityGMLVersion.v2_0 + " or " + CityGMLVersion.v3_0);
         }
+        cityKGDB.go();
     }
 }
