@@ -10,13 +10,17 @@ public class CityKG {
     public static void main(String[] args) {
         CityKGDBConfig config = new CityKGDBConfig("config/run.conf");
         CityKGDB cityKGDB;
-        if (config.CITYGML_VERSION == CityGMLVersion.v2_0) {
-            cityKGDB = new CityV2("config/run.conf");
+        if (config.CITYGML_VERSION == CityGMLVersion.v1_0) {
+            cityKGDB = new CityV2(config);
+        } else if (config.CITYGML_VERSION == CityGMLVersion.v2_0) {
+            cityKGDB = new CityV2(config);
         } else if (config.CITYGML_VERSION == CityGMLVersion.v3_0) {
-            cityKGDB = new CityV3("config/run.conf");
+            cityKGDB = new CityV3(config);
         } else {
             throw new RuntimeException("CityGML version given " + config.CITYGML_VERSION
-                    + ", expected " + CityGMLVersion.v2_0 + " or " + CityGMLVersion.v3_0);
+                    + ", expected " + CityGMLVersion.v1_0
+                    + ", " + CityGMLVersion.v2_0
+                    + " or " + CityGMLVersion.v3_0);
         }
         cityKGDB.go();
     }
