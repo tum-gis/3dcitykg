@@ -5,7 +5,7 @@ import citykg.core.db.*;
 
 public class CityKG {
     public static void main(String[] args) {
-        CityKGDBConfig config = new CityKGDBConfig("config/examples/cityjson.conf");
+        CityKGDBConfig config = new CityKGDBConfig("config/run.conf");
         Neo4jDB neo4jDB;
         if (config.CITYJSON) {
             neo4jDB = new CityJSONDB(config);
