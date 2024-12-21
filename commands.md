@@ -16,8 +16,8 @@ docker run -d --name citykg -p7474:7474 -p7687:7687 citykg ; docker logs --tail 
 # .\gradlew shadowJar
 
 # Tag and push the image to Docker Hub
-#docker tag citymodel-compare sonnguyentum/citymodel-compare:1.0.0
-#docker push sonnguyentum/citymodel-compare:1.0.0
+#docker tag citykg sonnguyentum/citykg:1.0.0
+#docker push sonnguyentum/citykg:1.0.0
 docker tag citykg tumgis/citykg:1.0.0
 docker push tumgis/citykg:1.0.0
 # OR For dev purposes
