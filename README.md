@@ -177,7 +177,9 @@ citygml.export.path = "output/citygml/export_v2.gml"
     tumgis/3dcitykg:1.0.0
     ```
 
-7. The exported datasets will be available in the `/absolute/path/to/output` directory on the local host machine.
+7. The graph database can be stored in the `/absolute/path/to/output` directory on the local host machine.
+
+8. The exported datasets will also be available in the `/absolute/path/to/output` directory on the local host machine.
 
 ### Build Docker Image
 
