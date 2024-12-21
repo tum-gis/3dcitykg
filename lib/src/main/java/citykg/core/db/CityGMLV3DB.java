@@ -1,9 +1,7 @@
-package citykg.core.db.citygml;
+package citykg.core.db;
 
 
 import citykg.core.config.CityKGDBConfig;
-import citykg.core.db.CityKGDB;
-import citykg.core.db.Neo4jDB;
 import citykg.core.factory.AuxNodeLabels;
 import citykg.core.factory.AuxPropNames;
 import citykg.core.factory.EdgeTypes;
@@ -39,14 +37,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.stream.StreamSupport;
 
-public class CityV3 extends CityKGDB {
-    protected final static Logger logger = LoggerFactory.getLogger(CityV3.class);
+public class CityGMLV3DB extends CityKGDB {
+    protected final static Logger logger = LoggerFactory.getLogger(CityGMLV3DB.class);
 
-    public CityV3(String configPath) {
+    public CityGMLV3DB(String configPath) {
         this(new CityKGDBConfig(configPath));
     }
 
-    public CityV3(CityKGDBConfig config) {
+    public CityGMLV3DB(CityKGDBConfig config) {
         super(config);
         uuidClasses = Set.of(AbstractFeature.class);
         idClasses = Set.of(AbstractGML.class);
@@ -55,11 +53,11 @@ public class CityV3 extends CityKGDB {
     }
 
     @Override
-    protected Neo4jRef mapFileCityGML(String filePath, int partitionIndex, boolean connectToRoot) {
+    protected Neo4jRef mapCityFile(String filePath, int partitionIndex, boolean connectToRoot) {
         final Neo4jRef[] cityModelRef = {null};
         try {
             CityKGDBConfig cityGMLConfig = (CityKGDBConfig) config;
-            if (cityGMLConfig.CITYGML_VERSION != CityGMLVersion.v3_0) {
+            if (cityGMLConfig.CITYGML_VERSION.equals("v3_0")) {
                 logger.warn("Found CityGML version {}, expected version {}",
                         cityGMLConfig.CITYGML_VERSION, CityGMLVersion.v3_0);
             }
@@ -273,14 +271,14 @@ public class CityV3 extends CityKGDB {
     }
 
     @Override
-    public void exportCityGML() {
+    public void exportCityFile() {
         CityKGDBConfig cityGMLConfig = (CityKGDBConfig) config;
-        exportCityGML(cityGMLConfig.CITYGML_EXPORT_PARTITION, cityGMLConfig.CITYGML_EXPORT_BBOX);
+        exportCityFile(cityGMLConfig.CITYGML_EXPORT_PARTITION, cityGMLConfig.CITYGML_EXPORT_BBOX);
     }
 
     // TODO Solve: appTarget of exported Appearances are empty (<app:target>#PolyID58908_1911_59781_62378</app:target> -> <app:target/>)
     @Override
-    public void exportCityGML(int partitionIndex, double[] topLevelBbox) {
+    public void exportCityFile(int partitionIndex, double[] topLevelBbox) {
         try (Transaction tx = graphDb.beginTx()) {
             // Get the CityModel node
             Node cityModelNode = tx.findNodes(Label.label(CityModel.class.getName()))

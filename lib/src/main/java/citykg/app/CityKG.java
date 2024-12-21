@@ -1,27 +1,24 @@
 package citykg.app;
 
 import citykg.core.config.CityKGDBConfig;
-import citykg.core.db.CityKGDB;
-import citykg.core.db.citygml.CityV2;
-import citykg.core.db.citygml.CityV3;
-import org.citygml4j.core.model.CityGMLVersion;
+import citykg.core.db.*;
 
 public class CityKG {
     public static void main(String[] args) {
-        CityKGDBConfig config = new CityKGDBConfig("config/run.conf");
-        CityKGDB cityKGDB;
-        if (config.CITYGML_VERSION == CityGMLVersion.v1_0) {
-            cityKGDB = new CityV2(config);
-        } else if (config.CITYGML_VERSION == CityGMLVersion.v2_0) {
-            cityKGDB = new CityV2(config);
-        } else if (config.CITYGML_VERSION == CityGMLVersion.v3_0) {
-            cityKGDB = new CityV3(config);
+        CityKGDBConfig config = new CityKGDBConfig("config/examples/cityjson.conf");
+        Neo4jDB neo4jDB;
+        if (config.CITYJSON) {
+            neo4jDB = new CityJSONDB(config);
+        } else if (config.CITYGML_VERSION.equals("v1_0")) {
+            neo4jDB = new CityGMLV2DB(config);
+        } else if (config.CITYGML_VERSION.equals("v2_0")) {
+            neo4jDB = new CityGMLV2DB(config);
+        } else if (config.CITYGML_VERSION.equals("v3_0")) {
+            neo4jDB = new CityGMLV3DB(config);
         } else {
-            throw new RuntimeException("CityGML version given " + config.CITYGML_VERSION
-                    + ", expected " + CityGMLVersion.v1_0
-                    + ", " + CityGMLVersion.v2_0
-                    + " or " + CityGMLVersion.v3_0);
+            throw new RuntimeException("Dataset version given " + config.CITYGML_VERSION
+                    + ", expected 'v1.0', 'v2.0', 'v3.0', or 'json'");
         }
-        cityKGDB.go();
+        neo4jDB.go();
     }
 }

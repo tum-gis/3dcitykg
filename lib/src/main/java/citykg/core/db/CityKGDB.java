@@ -65,14 +65,14 @@ public abstract class CityKGDB extends Neo4jDB {
             case 1 -> {
                 // Export only
                 openExisting();
-                exportCityGML();
+                exportCityFile();
             }
             case 2 -> {
                 // Map and export
                 openEmpty();
                 mapFromConfig();
                 summarize();
-                exportCityGML();
+                exportCityFile();
             }
             default -> throw new RuntimeException("Invalid use case");
         }
@@ -85,7 +85,7 @@ public abstract class CityKGDB extends Neo4jDB {
         }
     }
 
-    protected abstract Neo4jRef mapFileCityGML(String filePath, int partitionIndex, boolean connectToRoot);
+    protected abstract Neo4jRef mapCityFile(String filePath, int partitionIndex, boolean connectToRoot);
 
     protected abstract Class<?> getCityModelClass();
 
@@ -95,9 +95,9 @@ public abstract class CityKGDB extends Neo4jDB {
 
     protected abstract void calcTLBbox(List<Neo4jRef> topLevelNoBbox, int partitionIndex);
 
-    public abstract void exportCityGML();
+    public abstract void exportCityFile();
 
-    protected abstract void exportCityGML(int partitionIndex, double[] topLevelBbox);
+    protected abstract void exportCityFile(int partitionIndex, double[] topLevelBbox);
 
     protected void setIndexesIfNew() {
         logger.info("|--> Updating indexes");
@@ -143,10 +143,10 @@ public abstract class CityKGDB extends Neo4jDB {
             if (Files.isDirectory(path)) {
                 // Consider all files from this directory as one single dataset
                 logger.info("Input CityGML directory {} found", stringPath);
-                mapDirCityGML(path, i);
+                mapCityDir(path, i);
             } else {
                 // Is a file
-                mapFileCityGML(stringPath, i, true);
+                mapCityFile(stringPath, i, true);
             }
         }
         if (!config.NEO4J_RTREE_IMG_PATH.isBlank()) {
@@ -158,11 +158,11 @@ public abstract class CityKGDB extends Neo4jDB {
 
     // Map small files from a directory -> each file is loaded into one thread
     // TODO Momentarily for CityGML v2.0 only
-    protected void mapDirCityGML(Path path, int partitionIndex) {
+    protected void mapCityDir(Path path, int partitionIndex) {
         dbStats.startTimer();
 
         CityKGDBConfig cityGMLConfig = (CityKGDBConfig) config;
-        if (cityGMLConfig.CITYGML_VERSION != CityGMLVersion.v2_0) {
+        if (cityGMLConfig.CITYGML_VERSION.equals("v2_0")) {
             logger.warn("Found CityGML version {}, expected version {}",
                     cityGMLConfig.CITYGML_VERSION, CityGMLVersion.v2_0);
         }
