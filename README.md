@@ -1,3 +1,5 @@
+![Logo 3dcitykg](lib/resources/logo_3dcitykg.png)
+
 # 3dcitykg
 3DCityKG: Knowledge Graph representation for Semantic 3D City Models
 
