@@ -8,4 +8,3 @@
  */
 
 rootProject.name = '3dcitykg'
-include('lib')

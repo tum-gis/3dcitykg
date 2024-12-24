@@ -163,5 +163,5 @@ shadowJar {
     archiveBaseName.set('3dcitykg')
     archiveVersion.set('1.0.0')
     setProperty("zip64", true)
-    destinationDirectory = file("${project.rootDir}/lib")
+    destinationDirectory = file("${project.rootDir}")
 }
