@@ -46,21 +46,20 @@ What is needed:
    ```shell
    # Linux 
    docker run \
-      -it --rm \
+      -it \
       -p 7474:7474 -p 7687:7687 \
    tumgis/3dcitykg:1.0.0
    ```
    ```shell
    # Windows
     docker run ^
-       -it --rm ^
+       -it ^
        -p 7474:7474 -p 7687:7687 ^
     tumgis/3dcitykg:1.0.0
    ```
 
    This will start a Neo4j instance with all necessary dependencies installed. The parameters are as follows:
    + `-it`: Interactive mode.
-   + `--rm`: Remove the container after it exits.
    + `-p 7474:7474`: Expose port 7474 of the container to port 7474 of the host machine. This is the port used by the
      Neo4j browser (such as visualization and inspecting Cypher queries).
    + `-p 7687:7687`: Expose port 7687 of the container to port 7687 of the host machine. This is the port used by the
@@ -99,6 +98,8 @@ db.online = true
 
 # Input dataset to map onto graphs, can have multiple files/directories
 # If a path is a directory, ALL files in that folder shall be imported as one
+# The first path will be mapped to partition index 0
+# The second to partition index 1, and so on
 mapper.dataset.paths = [
   "input/citygml/fzk_haus_lod2_v2.gml"
 ]
@@ -106,9 +107,9 @@ mapper.dataset.paths = [
 # CITYGML CONFIGURATIONS
 # ......................
 
-# CityGML version
+# CityGML version (v1_0, v2_0, v3_0)
 citygml.version = "v2_0"
-# OR CityJSON
+# OR CityJSON (true, false)
 cityjson = false
 
 # CityGML export
@@ -180,6 +181,41 @@ citygml.export.path = "output/citygml/export_v2.gml"
 7. The graph database can be found in the `/absolute/path/to/output` directory on the local host machine.
 
 8. The exported datasets will also be available in the `/absolute/path/to/output` directory on the local host machine.
+
+### Interact with the Neo4j Database
+
+There are multiple ways to interact with the Neo4j database:
+
+1. **Neo4j Browser**: The Neo4j Browser is a web-based interface for querying and interacting with the graph database. It is by default available at [http://localhost:7474](http://localhost:7474).
+2. **Neo4j Desktop**: The Neo4j Desktop is a standalone application that provides a graphical user interface for managing and visualizing the graph database. It can be downloaded from the [Neo4j website](https://neo4j.com/download/).
+3. **Neo4j Bolt Protocol**: The Neo4j Bolt protocol is a binary protocol for connecting to the graph database. It can be accessed by default using the URI `bolt://localhost:7687`. This can be used in combination with the Neo4j drivers for different programming languages, such as Python, Java, or JavaScript. For example, using the Python driver:
+   ```python
+   from neo4j import GraphDatabase
+
+   # Connection URI and credentials
+   uri = "bolt://localhost:7687"
+   driver = GraphDatabase.driver(uri, auth=("user", "password"))
+   
+   # Start a session and run a query
+   with driver.session() as session:
+    result = session.run("MATCH (n) RETURN n")
+    for record in result:
+        print(record)
+   
+   # Close the driver connection
+   driver.close()
+   ```
+4. **Neo4j CLI**: The Neo4j CLI is a command-line interface for interacting with the graph database. It can be accessed by running the following command:
+   ```bash
+   # Look for the container ID
+   docker ps -a
+   
+   # Start the CLI
+   docker exec -it <container_id> cypher-shell
+   
+   # Run Cypher queries
+   @neo4j> MATCH (n) RETURN count(n);
+   ```
 
 ### Build Docker Image
 
