@@ -15,6 +15,8 @@ public class CityKG {
         String configFilePath = null;
         if (args.length < 1 || args[0] == null || args[0].trim().isEmpty()) {
             configFilePath = "config/run.conf";
+        } else {
+            configFilePath = args[0];
         }
         File configFile = new File(configFilePath);
 
