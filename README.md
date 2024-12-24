@@ -50,6 +50,7 @@ What is needed:
       -p 7474:7474 -p 7687:7687 \
    tumgis/3dcitykg:1.0.0
    ```
+
    ```shell
    # Windows
     docker run ^
@@ -65,7 +66,7 @@ What is needed:
    + `-p 7687:7687`: Expose port 7687 of the container to port 7687 of the host machine. This is the port used by the
      Neo4j Bolt connector (such as for RESTful services).
 
-4. The database is available at `neo4j://localhost:7687` (Bolt protocol) and can be visualized using Neo4j Desktop or Neo4j Browser.
+4. The database is available at [http://localhost:7474](http://localhost:7474) (Neo4j Browser) and can be accessed, queried and visualized using only a browser. No further installation is needed! For demonstration purposes, the database does not require any credentials. Simply click on "Connect" to access the database.
 
 **Notes**: To simplify the process for testing purposes, the Docker container has already been loaded with
 a test dataset, which is the [FZKHaus datasets](https://www.citygmlwiki.org/index.php?title=KIT_CityGML_Examples).
