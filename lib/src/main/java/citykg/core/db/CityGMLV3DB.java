@@ -57,9 +57,9 @@ public class CityGMLV3DB extends CityKGDB {
         final Neo4jRef[] cityModelRef = {null};
         try {
             CityKGDBConfig cityGMLConfig = (CityKGDBConfig) config;
-            if (cityGMLConfig.CITYGML_VERSION.equals("v3_0")) {
+            if (!cityGMLConfig.CITYGML_VERSION.equals("v3_0")) {
                 logger.warn("Found CityGML version {}, expected version {}",
-                        cityGMLConfig.CITYGML_VERSION, CityGMLVersion.v3_0);
+                        cityGMLConfig.CITYGML_VERSION, "v3_0");
             }
             dbStats.startTimer();
             CityGMLContext context = CityGMLContext.newInstance();
