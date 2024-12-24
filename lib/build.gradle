@@ -15,6 +15,9 @@ plugins {
 
     // Run main class
     id 'application'
+
+    // Create a fat jar
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 // Group and version
@@ -152,4 +155,13 @@ publishing {
             url = uri("${buildDir}/repo")
         }
     }
+}
+
+mainClassName = 'citykg/app/CityKG'
+
+shadowJar {
+    archiveBaseName.set('3dcitykg')
+    archiveVersion.set('1.0.0')
+    setProperty("zip64", true)
+    destinationDirectory = file("${project.rootDir}/lib")
 }

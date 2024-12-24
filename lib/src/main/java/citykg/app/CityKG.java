@@ -2,10 +2,28 @@ package citykg.app;
 
 import citykg.core.config.CityKGDBConfig;
 import citykg.core.db.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
 
 public class CityKG {
+    private final static Logger logger = LoggerFactory.getLogger(CityKG.class);
+
     public static void main(String[] args) {
-        CityKGDBConfig config = new CityKGDBConfig("config/run.conf");
+        String configFilePath = null;
+        if (args.length < 1 || args[0] == null || args[0].trim().isEmpty()) {
+            configFilePath = "config/run.conf";
+        }
+        File configFile = new File(configFilePath);
+
+        if (!configFile.exists()) {
+            logger.error("Config file not found: " + configFilePath);
+            System.exit(1);
+        }
+
+        CityKGDBConfig config = new CityKGDBConfig(configFilePath);
         Neo4jDB neo4jDB;
         if (config.CITYJSON) {
             neo4jDB = new CityJSONDB(config);
