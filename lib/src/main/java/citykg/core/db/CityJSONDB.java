@@ -60,13 +60,7 @@ public class CityJSONDB extends Neo4jDB {
             }
             default -> throw new RuntimeException("Invalid use case");
         }
-
-        // Kepp database online or close it
-        if (config.DB_ONLINE) {
-            remainOpen();
-        } else {
-            close();
-        }
+        close();
     }
 
     // TODO Currently no multithreaded read for CityJSON

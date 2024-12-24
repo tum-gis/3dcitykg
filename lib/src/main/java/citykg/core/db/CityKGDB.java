@@ -76,13 +76,7 @@ public abstract class CityKGDB extends Neo4jDB {
             }
             default -> throw new RuntimeException("Invalid use case");
         }
-
-        // Kepp database online or close it
-        if (config.DB_ONLINE) {
-            remainOpen();
-        } else {
-            close();
-        }
+        close();
     }
 
     protected abstract Neo4jRef mapCityFile(String filePath, int partitionIndex, boolean connectToRoot);

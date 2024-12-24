@@ -109,11 +109,11 @@ public abstract class Neo4jDB implements GraphDB {
                 // Use this to load properties from a file
                 //.loadPropertiesFromFile(Path.of(config.NEO4J_CONFIG_FILE))
                 // Or use this to set properties manually
-                .setConfig(GraphDatabaseSettings.auth_enabled, false)
-                .setConfig(GraphDatabaseSettings.default_listen_address, new SocketAddress("0.0.0.0")) // allows outside access (such as via Docker)
-                .setConfig(BoltConnector.enabled, true) // default port 7687
-                .setConfig(HttpConnector.enabled, false) // default port 7474
-                .setConfig(HttpsConnector.enabled, false) // default port 7473
+                // .setConfig(GraphDatabaseSettings.auth_enabled, false)
+                // .setConfig(GraphDatabaseSettings.default_listen_address, new SocketAddress("0.0.0.0")) // allows outside access (such as via Docker)
+                // .setConfig(BoltConnector.enabled, true) // default port 7687
+                // .setConfig(HttpConnector.enabled, false) // default port 7474
+                // .setConfig(HttpsConnector.enabled, false) // default port 7473
                 .setConfig(GraphDatabaseSettings.keep_logical_logs, "keep_none")
                 //.setConfig(GraphDatabaseSettings.plugin_dir, Path.of(config.NEO4J_PLUGIN_PATH).toAbsolutePath())
                 //.setConfig(GraphDatabaseSettings.procedure_unrestricted, List.of("apoc.*"))
