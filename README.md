@@ -77,7 +77,7 @@ Please refer to this [section](#use-own-datasets) for more details on how to use
 
 ### Configure the Program
 
-The entire program can be configured using a single file located at `lib/config/run.conf`. Example configurations for CityGML 1.0, 2.0, 3.0, and CityJSON datasets can be found in the `examples` sub-directory.
+The entire program can be configured using a single file located at [`config/run.conf`](config/run.conf). Example configurations for CityGML 1.0, 2.0, 3.0, and CityJSON datasets can be found in the [`examples`](config/examples) sub-directory.
 
 The most important settings are:
 
@@ -133,23 +133,23 @@ citygml.export.path = "output/citygml/export_v2.gml"
    git clone https://github.com/tum-gis/3dcitykg
    ```
    
-4. Place your CityGML or CityJSON datasets in the `input/citygml` directory:
+4. Place your CityGML or CityJSON datasets in the [`input/citygml`](input/citygml) or [`input/cityjson`](input/cityjson) directory:
    ```shell
-   lib
-   ├── input
-   │   └── citygml
-   │       ├── dataset1.gml
-   │       ├── dataset2.gml
-   │       └── ...
-   │   └── cityjson
-   │       ├── dataset1.json
-   │       └── ...
+   input
+   ├── citygml
+   │   ├── dataset1.gml
+   │   ├── dataset2.gml
+   │   └── ...
+   └── cityjson
+       ├── dataset1.json
+       └── ...
    ```
    ```shell
    # Example
-   cp /path/to/dataset.gml lib/input/citygml/
+   cp /path/to/dataset.gml input/citygml/
+   cp /path/to/dataset.json input/cityjson/
    ```
-5. Configure the program using the `lib/config/run.conf` file:
+5. Configure the program using the [`config/run.conf`](config/run.conf) file:
    ```bash
    mapper.dataset.paths = [
      "input/citygml/dataset1.gml"
@@ -160,7 +160,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
    ```shell
     # Linux
     docker run \
-        -it --rm \
+        -it \
         -p 7474:7474 -p 7687:7687 \
         -v "/absolute/path/to/config:/home/gradle/src/3dcitykg/config" \
         -v "/absolute/path/to/input:/home/gradle/src/3dcitykg/input" \
@@ -171,7 +171,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
     ```shell
     # Windows
     docker run ^
-        -it --rm ^
+        -it ^
         -p 7474:7474 -p 7687:7687 ^
         -v "/absolute/path/to/config:/home/gradle/src/3dcitykg/config" ^
         -v "/absolute/path/to/input:/home/gradle/src/3dcitykg/input" ^
