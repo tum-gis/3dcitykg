@@ -31,7 +31,7 @@ This tool can be used in two ways: either via Gradle or via Docker. For testing 
 What is needed:
 
 + [Docker](https://docs.docker.com/get-docker/)
-+ [Neo4j Desktop](https://neo4j.com/download/)
++ A web browser or [Neo4j Desktop](https://neo4j.com/download/)
 
 1. Make sure Docker is up and running.
 
