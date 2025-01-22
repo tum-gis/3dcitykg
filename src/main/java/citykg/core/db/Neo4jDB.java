@@ -19,6 +19,7 @@ import org.neo4j.configuration.helpers.SocketAddress;
 import org.neo4j.dbms.api.DatabaseManagementService;
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder;
 import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.io.fs.FileUtils;
 import org.slf4j.Logger;
@@ -138,9 +139,35 @@ public abstract class Neo4jDB implements GraphDB {
 
     public void waitForIndexes() {
         try (Transaction tx = graphDb.beginTx()) {
+            logger.info("Waiting for indexes to be online");
+            long startTime = System.currentTimeMillis();
             Schema schema = tx.schema();
-            schema.getIndexes().forEach(index -> schema.awaitIndexOnline(index, 3600, TimeUnit.SECONDS));
+
+            while (true) {
+                boolean allOnline = true;
+
+                for (IndexDefinition indexDefinition : schema.getIndexes()) {
+                    if (schema.getIndexState(indexDefinition) != Schema.IndexState.ONLINE) {
+                        allOnline = false;
+                        break;
+                    }
+                }
+
+                if (allOnline) {
+                    break;
+                }
+
+                if (System.currentTimeMillis() - startTime > 3600 * 1000) {
+                    throw new RuntimeException("Timeout: Not all indexes are online within the specified time.");
+                }
+
+                Thread.sleep(100); // Check every 100 milliseconds
+            }
+
+            // schema.getIndexes().forEach(index -> schema.awaitIndexOnline(index, 3600, TimeUnit.SECONDS));
+
             tx.commit();
+            logger.info("All indexes are online");
         } catch (Exception e) {
             logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
@@ -446,8 +473,12 @@ public abstract class Neo4jDB implements GraphDB {
     }
 
     public void summarize() {
+        // Wait for all indexes to be updated
+        waitForIndexes();
         // Mapped nodes
-        if (!mappedClassesTmp.isEmpty()) throw new RuntimeException("Mapping still in progress");
+        if (!mappedClassesTmp.isEmpty()) {
+            logger.warn("Mapping still in progress {}", Arrays.toString(mappedClassesTmp.stream().map(Class::getSimpleName).toArray()));
+        }
         dbStats.startTimer();
         logger.info("|--> Retrieving node and label stats");
         Map<String, Long> mappedLabelCount = new HashMap<>();
