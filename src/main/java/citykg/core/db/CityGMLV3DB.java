@@ -64,7 +64,7 @@ public class CityGMLV3DB extends CityKGDB {
             dbStats.startTimer();
             CityGMLContext context = CityGMLContext.newInstance();
             CityGMLInputFactory in = context.createCityGMLInputFactory()
-                    .withChunking(ChunkOptions.defaults().skipCityModel(false));
+                    .withChunking(ChunkOptions.chunkByFeatures());
             Path file = Path.of(filePath);
             logger.info("Reading CityGML v3.0 file {} chunk-wise into main memory", filePath);
 
