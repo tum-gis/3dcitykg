@@ -8,22 +8,22 @@ plugins {
     // Run main class
     id 'application'
 
-    // Create a fat jar
+    // Create a fat jar (if needed)
     // id 'com.gradleup.shadow' version '8.3.9'
 }
 
 // Group and version
-group = 'org.tum-gis'
-version = '1.0.0'
+group = "org.tum-gis"
+version = "1.0.0"
 
-tasks.named('jar') {
-    archiveBaseName = 'citykg'
+tasks.named("jar") {
+    archivesName.set("citykg")
 }
 
 // Java compatibility
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -79,39 +79,35 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.5.12'
 }
 
-//configurations.all {
-//    exclude(group: 'org.slf4j', module: 'slf4j-nop')
-//}
-
 configurations.all {
-    exclude group: 'org.neo4j', module: 'neo4j-slf4j-provider'
+    exclude group: "org.neo4j", module: "neo4j-slf4j-provider"
 }
 
 // Application main class & JVM args
 application {
-    mainClass = "citykg.app.CityKG"
+    mainClass.set("citykg.app.CityKG")
 
-    applicationDefaultJvmArgs = [
-            '-Xms8g', '-Xmx16g',
-            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.lang.ref=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.nio=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.io=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.time=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED',
-            '--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
-            '--add-opens', 'java.base/jdk.internal.ref=ALL-UNNAMED',
-            '--add-opens', 'java.base/sun.net.www.protocol.http=ALL-UNNAMED',
-            '--add-opens', 'java.base/sun.nio.ch=ALL-UNNAMED',
-            '-Dlogback.configurationFile=config/logback.xml'
-    ]
+    applicationDefaultJvmArgs = listOf(
+            "-Xms8g", "-Xmx16g",
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang.ref=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED",
+            "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+            "--add-opens", "java.base/java.io=ALL-UNNAMED",
+            "--add-opens", "java.base/java.time=ALL-UNNAMED",
+            "--add-opens", "java.base/java.util=ALL-UNNAMED",
+            "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED",
+            "--add-opens", "java.base/jdk.internal.loader=ALL-UNNAMED",
+            "--add-opens", "java.base/jdk.internal.ref=ALL-UNNAMED",
+            "--add-opens", "java.base/sun.net.www.protocol.http=ALL-UNNAMED",
+            "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+            "-Dlogback.configurationFile=config/logback.xml"
+    )
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs.add("-Xlint:none")
-    options.release = 17
+    options.release.set(17)
 }
 
 // Repository to publish
@@ -119,21 +115,22 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifactId = 'citykg'
+            artifactId = "citykg"
         }
     }
 
     repositories {
         maven {
-            name = 'local'
+            name = "local"
             url = layout.buildDirectory.dir("repo")
         }
     }
 }
 
-//tasks.named('shadowJar') {
-//    archiveBaseName = '3dcitykg'
-//    archiveVersion = '1.0.0'
-//    zip64 = true
-//    destinationDirectory = project.rootDir
-//}
+// Example if you re-enable shadowJar
+// tasks.named<ShadowJar>("shadowJar") {
+//     archivesName.set("3dcitykg")
+//     archiveVersion.set("1.0.0")
+//     isZip64 = true
+//     destinationDirectory.set(project.rootDir)
+// }
