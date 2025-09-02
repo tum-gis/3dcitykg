@@ -9,7 +9,7 @@ plugins {
     id 'application'
 
     // Create a fat jar (if needed)
-    id 'com.gradleup.shadow' version '9.1.0'
+    // id 'com.gradleup.shadow' version '9.1.0'
 }
 
 // Group and version
@@ -132,22 +132,22 @@ publishing {
     }
 }
 
-tasks.named("shadowJar") {
-    archiveBaseName.set("3dcitykg")
-    archiveVersion.set("1.0.0")
-    destinationDirectory.set(project.rootDir)
-    setProperty("zip64", true)
-
-    manifest {
-        attributes('Main-Class': 'citykg.app.CityKG')
-    }
-
-    dependencies {
-        exclude(dependency("org.neo4j:arrow-bom"))
-    }
-
-    // Exclude specific files from the archive
-    exclude('**/META-INF/*.RSA', '**/META-INF/*.SF', '**/META-INF/*.DSA')
-
-    configurations = [project.configurations.runtimeClasspath]
-}
+//tasks.named("shadowJar") {
+//    archiveBaseName.set("3dcitykg")
+//    archiveVersion.set("1.0.0")
+//    destinationDirectory.set(project.rootDir)
+//    setProperty("zip64", true)
+//
+//    manifest {
+//        attributes('Main-Class': 'citykg.app.CityKG')
+//    }
+//
+//    dependencies {
+//        exclude(dependency("org.neo4j:arrow-bom"))
+//    }
+//
+//    // Exclude specific files from the archive
+//    exclude('**/META-INF/*.RSA', '**/META-INF/*.SF', '**/META-INF/*.DSA')
+//
+//    configurations = [project.configurations.runtimeClasspath]
+//}
