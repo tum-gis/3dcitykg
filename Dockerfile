@@ -24,7 +24,8 @@ WORKDIR /home/gradle/src/3dcitykg
 RUN gradle dependencies --no-daemon || true
 
 # Build the application
-RUN gradle build --no-daemon
+COPY gradlew gradle/ /home/gradle/src/3dcitykg/
+RUN ./gradlew build --no-daemon
 
 # Replace the default Neo4j configuration
 COPY config/neo4j.conf /etc/neo4j/neo4j.conf
