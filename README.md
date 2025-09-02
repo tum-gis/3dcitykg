@@ -41,10 +41,10 @@ What is needed:
    docker pull tumgis/3dcitykg:1.0.0
    ```
 
-3. Run the image:
+3. Run the image (both AMD64 and ARM64 architectures are supported):
 
    ```shell
-   # Linux 
+   # Linux, Mac OS / Apple Silicon 
    docker run \
       -it \
       -p 7474:7474 -p 7687:7687 \
@@ -52,7 +52,7 @@ What is needed:
    ```
 
    ```shell
-   # Windows
+   # Windows with WSL2
     docker run ^
        -it ^
        -p 7474:7474 -p 7687:7687 ^
