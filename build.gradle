@@ -17,7 +17,7 @@ group = "org.tum-gis"
 version = "1.0.0"
 
 tasks.named("jar") {
-    archivesName.set("citykg")
+    archiveBaseName.set("citykg")
 }
 
 // Java compatibility
@@ -87,7 +87,7 @@ configurations.all {
 application {
     mainClass.set("citykg.app.CityKG")
 
-    applicationDefaultJvmArgs = listOf(
+    applicationDefaultJvmArgs = [
             "-Xms8g", "-Xmx16g",
             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
             "--add-opens", "java.base/java.lang.ref=ALL-UNNAMED",
@@ -102,7 +102,7 @@ application {
             "--add-opens", "java.base/sun.net.www.protocol.http=ALL-UNNAMED",
             "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
             "-Dlogback.configurationFile=config/logback.xml"
-    )
+    ]
 }
 
 tasks.withType(JavaCompile).configureEach {
