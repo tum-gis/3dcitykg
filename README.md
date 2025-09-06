@@ -274,7 +274,7 @@ GeoInfo Conference 2017 (ISPRS Annals of the Photogrammetry, Remote Sensing and 
 2017, 99-106.
 
 **Nguyen, Son H.**: [_Spatio-semantic Comparison of 3D City Models in CityGML using a Graph
-Database_](https://mediatum.ub.tum.de/doc/1374646/1374646.pdf). Master thesis, 2017.
+Database_](https://mediatum.ub.tum.de/doc/1374646/1374646.pdf). Master's thesis, Technical University of Munich, 2017.
 
 ## License
 
