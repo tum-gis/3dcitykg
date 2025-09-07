@@ -15,10 +15,15 @@ public class CityKGDBConfig extends Neo4jDBConfig {
         CITYGML_EXPORT_PARTITION = config.getInt("citygml.export.partition");
         String bboxString = config.getString("citygml.export.bbox");
         String[] bboxStringArray = bboxString.trim().split(",\\s*");
-        CITYGML_EXPORT_BBOX = new double[bboxStringArray.length];
-        for (int i = 0; i < bboxStringArray.length; i++) {
-            CITYGML_EXPORT_BBOX[i] = Double.parseDouble(bboxStringArray[i]);
+        if (bboxStringArray.length != 6) {
+            CITYGML_EXPORT_BBOX = new double[]{-1e9, -1e9, -1e9, 1e9, 1e9, 1e9};
+        } else {
+            CITYGML_EXPORT_BBOX = new double[6];
+            for (int i = 0; i < bboxStringArray.length; i++) {
+                CITYGML_EXPORT_BBOX[i] = Double.parseDouble(bboxStringArray[i]);
+            }
         }
+
         CITYGML_EXPORT_PATH = config.getString("citygml.export.path");
     }
 }
