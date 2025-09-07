@@ -48,16 +48,16 @@ dependencies {
     // implementation 'com.google.guava:guava:31.0.1-jre'
 
     // https://mvnrepository.com/artifact/org.citygml4j/citygml4j-core
-    implementation 'org.citygml4j:citygml4j-core:3.2.1'
+    implementation 'org.citygml4j:citygml4j-core:3.2.5'
 
     // https://mvnrepository.com/artifact/org.citygml4j/citygml4j-xml
-    implementation 'org.citygml4j:citygml4j-xml:3.2.1'
+    implementation 'org.citygml4j:citygml4j-xml:3.2.5'
 
     // https://mvnrepository.com/artifact/org.citygml4j/citygml4j
-    implementation 'org.citygml4j:citygml4j:2.13.0'
+    implementation 'org.citygml4j:citygml4j:2.13.1'
 
     // https://mvnrepository.com/artifact/org.citygml4j/citygml4j-cityjson
-    implementation 'org.citygml4j:citygml4j-cityjson:3.2.2'
+    implementation 'org.citygml4j:citygml4j-cityjson:3.2.5'
 
     // https://mvnrepository.com/artifact/org.neo4j/neo4j
     implementation 'org.neo4j:neo4j:5.25.1'
