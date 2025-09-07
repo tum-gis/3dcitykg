@@ -49,7 +49,7 @@ public class CityGMLV3DB extends CityKGDB {
         uuidClasses = Set.of(AbstractFeature.class);
         idClasses = Set.of(AbstractGML.class);
         hrefClasses = Set.of(AbstractReference.class, EngineeringCRSProperty.class,
-                AbstractInlineOrByReferenceProperty.class);
+                AbstractInlineOrByReferenceProperty.class); // All implementing AssociationAttributes
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CityGMLV3DB extends CityKGDB {
             dbStats.startTimer();
             CityGMLContext context = CityGMLContext.newInstance();
             CityGMLInputFactory in = context.createCityGMLInputFactory()
-                    .withChunking(ChunkOptions.chunkByFeatures());
+                    .withChunking(ChunkOptions.chunkByFeatures().skipCityModel(false));
             Path file = Path.of(filePath);
             logger.info("Reading CityGML v3.0 file {} chunk-wise into main memory", filePath);
 
@@ -115,6 +115,7 @@ public class CityGMLV3DB extends CityKGDB {
             dbStats.startTimer();
             logger.info("Calculate and map bounding boxes of top-level features");
             calcTLBbox(topLevelNoBbbox, partitionIndex);
+            setIndexesIfNew(); // In case new bbox properties were added
             dbStats.stopTimer("Calculate and map bounding boxes of top-level features");
 
             logger.info("Finished mapping file {}", filePath);
@@ -301,6 +302,7 @@ public class CityGMLV3DB extends CityKGDB {
                         .withDefaultPrefixes()
                         .withDefaultNamespace(CoreModule.of(version).getNamespaceURI())
                         .write(cityModel);
+                logger.info("Exported CityGML v3.0 file to {}", exportFilePath);
             }
         } catch (CityGMLWriteException | CityGMLContextException e) {
             throw new RuntimeException(e);

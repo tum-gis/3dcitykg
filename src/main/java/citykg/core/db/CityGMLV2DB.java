@@ -11,7 +11,6 @@ import org.apache.commons.numbers.core.Precision;
 import org.citygml4j.CityGMLContext;
 import org.citygml4j.builder.jaxb.CityGMLBuilder;
 import org.citygml4j.builder.jaxb.CityGMLBuilderException;
-import org.citygml4j.core.model.CityGMLVersion;
 import org.citygml4j.model.citygml.CityGML;
 import org.citygml4j.model.citygml.core.*;
 import org.citygml4j.model.gml.base.AbstractGML;
@@ -52,7 +51,7 @@ public class CityGMLV2DB extends CityKGDB {
         super(config);
         uuidClasses = Set.of(CityGML.class);
         idClasses = Set.of(AbstractGML.class);
-        hrefClasses = Set.of(AssociationByRepOrRef.class, StringOrRef.class);
+        hrefClasses = Set.of(AssociationByRepOrRef.class, StringOrRef.class); // All implementing AssociationAttributeGroup
     }
 
     @Override
@@ -124,6 +123,7 @@ public class CityGMLV2DB extends CityKGDB {
             dbStats.startTimer();
             logger.info("Calculate and map bounding boxes of top-level features");
             calcTLBbox(topLevelNoBbox, partitionIndex);
+            setIndexesIfNew(); // In case new bbox properties were added
             dbStats.stopTimer("Calculate and map bounding boxes of top-level features");
 
             logger.info("Finished mapping file {}", filePath);
@@ -329,7 +329,7 @@ public class CityGMLV2DB extends CityKGDB {
             CityModel cityModel = (CityModel) toObject(cityModelNode, handleOriginXLink(), topLevelBbox, this::isParentOfTopLevel);
             writer.write(cityModel);
             writer.close();
-            logger.info("CityGML file written to {}", exportFilePath);
+            logger.info("Exported CityGML v2.0 file to {}", exportFilePath);
             tx.commit();
         } catch (CityGMLBuilderException | CityGMLWriteException e) {
             throw new RuntimeException(e);

@@ -12,10 +12,6 @@ import citykg.utils.NumberUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.neo4j.configuration.GraphDatabaseSettings;
-import org.neo4j.configuration.connectors.BoltConnector;
-import org.neo4j.configuration.connectors.HttpConnector;
-import org.neo4j.configuration.connectors.HttpsConnector;
-import org.neo4j.configuration.helpers.SocketAddress;
 import org.neo4j.dbms.api.DatabaseManagementService;
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder;
 import org.neo4j.graphdb.*;
@@ -560,15 +556,32 @@ public abstract class Neo4jDB implements GraphDB {
     }
 
     public static void finishThreads(ExecutorService executorService, long seconds) {
-        executorService.shutdown();
+        executorService.shutdown(); // Stop accepting new tasks
+        boolean finished = false;
         try {
-            if (!executorService.awaitTermination(seconds, TimeUnit.SECONDS)) {
-                executorService.shutdownNow();
+            // Wait for tasks to finish normally
+            finished = executorService.awaitTermination(seconds, TimeUnit.SECONDS);
+
+            if (!finished) {
+                logger.warn("Timeout reached. Attempting to cancel running tasks...");
+                List<Runnable> notStartedTasks = executorService.shutdownNow();
+                logger.warn("Cancelled {} tasks that were not yet started", notStartedTasks.size());
+
+                // Wait a short time to give running tasks a chance to respond to interruption
+                finished = executorService.awaitTermination(5, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
             logger.error("awaitTermination interrupted: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
-            executorService.shutdownNow();
+            // Attempt shutdownNow again
+            List<Runnable> notStartedTasks = executorService.shutdownNow();
+            logger.warn("Cancelled {} tasks due to interruption", notStartedTasks.size());
+            Thread.currentThread().interrupt(); // Preserve interrupt status
         }
-        logger.info("All threads finished");
+
+        if (finished) {
+            logger.info("All threads finished normally");
+        } else {
+            logger.warn("Some threads may still be running after shutdown attempt");
+        }
     }
 }

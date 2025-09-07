@@ -208,18 +208,19 @@ public abstract class CityKGDB extends Neo4jDB {
         } finally {
             Neo4jDB.finishThreads(executorService, config.MAPPER_CONCURRENT_TIMEOUT);
         }
-        logger.info("Mapped {} top-level features from directory {}", tlCountDir, path.toString());
-        dbStats.stopTimer("Map all input tiled files in " + path.toString());
+        logger.info("Mapped {} top-level features from directory {}", tlCountDir, path);
+        dbStats.stopTimer("Map all input tiled files in " + path);
 
         dbStats.startTimer();
-        logger.info("Resolve links of tiled files in input directory {} {},", partitionIndex, path.toString());
+        logger.info("Resolve links of tiled files in input directory {} {},", partitionIndex, path);
         setIndexesIfNew();
         resolveXLinks(resolveLinkRules(), correctLinkRules(), partitionIndex);
-        dbStats.stopTimer("Resolve links of tiled files in input directory " + path.toString());
+        dbStats.stopTimer("Resolve links of tiled files in input directory " + path);
 
         dbStats.startTimer();
         logger.info("Calculate and map bounding boxes of top-level features");
         calcTLBbox(topLevelNoBbox, partitionIndex);
+        setIndexesIfNew(); // In case new bbox properties were added
         dbStats.stopTimer("Calculate and map bounding boxes of top-level features");
 
         // Merge all CityModel objects to one
