@@ -25,6 +25,7 @@ WORKDIR /home/gradle/src
 
 # Clone the repository
 RUN git clone https://github.com/tum-gis/3dcitykg
+# RUN git clone --branch v1.1.0 --depth 1 https://github.com/tum-gis/3dcitykg
 
 # Change to project directory
 WORKDIR /home/gradle/src/3dcitykg
