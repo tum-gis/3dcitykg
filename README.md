@@ -86,6 +86,7 @@ The most important settings are:
 # 0: Map only using the configurations in this file
 # 1: Export only using an existing database configured in this file
 # 2: Map AND Export using the configurations in this file
+# 3: Open existing database (useful for querying a mapped graph)
 case = 2
 
 # DATABASE CONFIGURATIONS
@@ -125,7 +126,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
 
 2. Pull the following image from Docker Hub:
    ```shell
-   docker pull tumgis/3dcitykg:1.0.0
+   docker pull tumgis/3dcitykg:latest
    ```
    
 3. Clone the project:
@@ -165,7 +166,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
         -v "/absolute/path/to/config:/home/gradle/src/3dcitykg/config" \
         -v "/absolute/path/to/input:/home/gradle/src/3dcitykg/input" \
         -v "/absolute/path/to/output:/home/gradle/src/3dcitykg/output" \
-    tumgis/3dcitykg:1.0.0
+    tumgis/3dcitykg:latest
     ```
 
     ```shell
@@ -176,7 +177,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
         -v "/absolute/path/to/config:/home/gradle/src/3dcitykg/config" ^
         -v "/absolute/path/to/input:/home/gradle/src/3dcitykg/input" ^
         -v "/absolute/path/to/output:/home/gradle/src/3dcitykg/output" ^
-    tumgis/3dcitykg:1.0.0
+    tumgis/3dcitykg:latest
     ```
 
 7. The graph database can be found in the `/absolute/path/to/output` directory on the local host machine.
@@ -223,14 +224,18 @@ There are multiple ways to interact with the Neo4j database:
 To build the Docker image from scratch, run the following command:
 
 ```shell
-docker build --no-cache -t tumgis/3dcitykg:1.0.0 .
-```
+# Enable Docker Buildx (if not already)
+docker buildx create --use
+docker buildx inspect --bootstrap
 
-Tag and push the image to Docker Hub:
-
-```shell
-docker tag 3dcitykg tumgis/3dcitykg:1.0.0
-docker push tumgis/3dcitykg:1.0.0
+# Build and push multi-arch image
+docker buildx build \
+    --no-cache \
+    --platform linux/amd64,linux/arm64 \
+    -t tumgis/3dcitykg:1.1.0 \
+    -t tumgis/3dcitykg:latest \
+    --push \
+    .
 ```
 
 ## Publications
