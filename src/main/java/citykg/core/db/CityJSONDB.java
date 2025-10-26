@@ -58,6 +58,10 @@ public class CityJSONDB extends Neo4jDB {
                 summarize();
                 exportCityFile(0);
             }
+            case 3 -> {
+                // Open existing database for querying
+                openExisting();
+            }
             default -> throw new RuntimeException("Invalid use case");
         }
         close();

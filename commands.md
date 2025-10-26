@@ -31,11 +31,13 @@ docker buildx inspect --bootstrap
 docker buildx build \
     --no-cache \
     --platform linux/amd64,linux/arm64 \
-    -t tumgis/3dcitykg:1.0.0 \
+    -t tumgis/3dcitykg:1.1.0 \
+    -t tumgis/3dcitykg:latest \
     --push \
     .
 
 # Test local
-docker run --rm --platform linux/amd64 -t -p7474:7474 -p7687:7687 tumgis/3dcitykg:1.0.0
-# docker run --rm --platform linux/arm64 -t -p7474:7474 -p7687:7687 tumgis/3dcitykg:1.0.0
+# docker buildx imagetools inspect tumgis/3dcitykg:latest
+docker run --rm --platform linux/amd64 -t -p7474:7474 -p7687:7687 tumgis/3dcitykg:latest
+# docker run --rm --platform linux/arm64 -t -p7474:7474 -p7687:7687 tumgis/3dcitykg:1.1.0
 ```
