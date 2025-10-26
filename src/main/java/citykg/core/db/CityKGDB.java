@@ -74,6 +74,10 @@ public abstract class CityKGDB extends Neo4jDB {
                 summarize();
                 exportCityFile();
             }
+            case 3 -> {
+                // Open existing database for querying
+                openExisting();
+            }
             default -> throw new RuntimeException("Invalid use case");
         }
         close();

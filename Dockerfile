@@ -11,6 +11,15 @@ RUN wget -O - https://debian.neo4j.com/neotechnology.gpg.key | gpg --dearmor -o 
     apt-get update && \
     apt-get -y install neo4j
 
+# Find installed Neo4j version and fetch matching APOC release
+RUN apt-get -y install jq
+RUN NEO4J_VERSION=$(neo4j --version) && \
+    echo "Detected Neo4j version: $NEO4J_VERSION" && \
+    APOC_URL=$(curl -s https://api.github.com/repos/neo4j/apoc/releases \
+        | jq -r --arg v "$NEO4J_VERSION" '.[] | select(.tag_name==$v) | .assets[] | select(.name|test("core.jar$")) | .browser_download_url' | head -n 1) && \
+    echo "Downloading APOC from: $APOC_URL" && \
+    wget -O /var/lib/neo4j/plugins/apoc.jar "$APOC_URL"
+
 # Set the working directory
 WORKDIR /home/gradle/src
 
