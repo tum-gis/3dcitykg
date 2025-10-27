@@ -162,7 +162,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
    ```shell
     # Linux
     docker run \
-        -it -rm \
+        -it --rm \
         -p 7474:7474 -p 7687:7687 \
         -v "$(pwd)/config:/home/gradle/src/3dcitykg/config" \
         -v "$(pwd)/input:/home/gradle/src/3dcitykg/input" \
@@ -173,7 +173,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
     ```shell
     # Windows
     docker run ^
-        -it -rm ^
+        -it --rm ^
         -p 7474:7474 -p 7687:7687 ^
         -v "$(pwd)/config:/home/gradle/src/3dcitykg/config" ^
         -v "$(pwd)/input:/home/gradle/src/3dcitykg/input" ^
