@@ -38,7 +38,7 @@ What is needed:
 2. Pull the following image from Docker Hub:
 
    ```shell
-   docker pull tumgis/3dcitykg:1.0.0
+   docker pull tumgis/3dcitykg:latest
    ```
 
 3. Run the image (both AMD64 and ARM64 architectures are supported):
@@ -48,7 +48,7 @@ What is needed:
    docker run \
       -it \
       -p 7474:7474 -p 7687:7687 \
-   tumgis/3dcitykg:1.0.0
+   tumgis/3dcitykg:latest
    ```
 
    ```shell
@@ -56,7 +56,7 @@ What is needed:
     docker run ^
        -it ^
        -p 7474:7474 -p 7687:7687 ^
-    tumgis/3dcitykg:1.0.0
+    tumgis/3dcitykg:latest
    ```
 
    This will start a Neo4j instance with all necessary dependencies installed. The parameters are as follows:
@@ -131,6 +131,7 @@ citygml.export.path = "output/citygml/export_v2.gml"
    
 3. Clone the project:
    ```shell
+   cd /working/directory/
    git clone https://github.com/tum-gis/3dcitykg
    ```
    
@@ -161,24 +162,26 @@ citygml.export.path = "output/citygml/export_v2.gml"
    ```shell
     # Linux
     docker run \
-        -it \
+        -it -rm \
         -p 7474:7474 -p 7687:7687 \
-        -v "/absolute/path/to/config:/home/gradle/src/3dcitykg/config" \
-        -v "/absolute/path/to/input:/home/gradle/src/3dcitykg/input" \
-        -v "/absolute/path/to/output:/home/gradle/src/3dcitykg/output" \
+        -v "$(pwd)/config:/home/gradle/src/3dcitykg/config" \
+        -v "$(pwd)/input:/home/gradle/src/3dcitykg/input" \
+        -v "$(pwd)/output:/home/gradle/src/3dcitykg/output" \
     tumgis/3dcitykg:latest
     ```
 
     ```shell
     # Windows
     docker run ^
-        -it ^
+        -it -rm ^
         -p 7474:7474 -p 7687:7687 ^
-        -v "/absolute/path/to/config:/home/gradle/src/3dcitykg/config" ^
-        -v "/absolute/path/to/input:/home/gradle/src/3dcitykg/input" ^
-        -v "/absolute/path/to/output:/home/gradle/src/3dcitykg/output" ^
+        -v "$(pwd)/config:/home/gradle/src/3dcitykg/config" ^
+        -v "$(pwd)/input:/home/gradle/src/3dcitykg/input" ^
+        -v "$(pwd)/output:/home/gradle/src/3dcitykg/output" ^
     tumgis/3dcitykg:latest
     ```
+    
+    The command `$(pwd)` returns the curernt working directory of the host system.
 
 7. The graph database can be found in the `/absolute/path/to/output` directory on the local host machine.
 
